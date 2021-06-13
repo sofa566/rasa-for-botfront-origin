@@ -1,6 +1,7 @@
 import os
 import warnings
 import rasa
+import logging
 
 from typing import Any, Text, Dict, Optional
 
@@ -13,7 +14,10 @@ from rasa.shared.nlu.training_data.training_data import TrainingData
 from rasa.nlu.model import Metadata
 
 from fuzzy_matcher import process
+from pprint import pprint
+import json
 
+logger = logging.getLogger(__name__)
 
 class Gazette(Component):
     name = "Gazette"
@@ -63,11 +67,19 @@ class Gazette(Component):
         self, training_data: TrainingData, cfg: RasaNLUModelConfig, **kwargs: Any
     ) -> None:
         gazette_dict = {}
+        logger.error("BillShow: training_data  {}", training_data)
+        # my_json_object = json.dumps(training_data.nlu_as_json)
+        # logger.error("BillShow: json of training_data  {}", my_json_object)
         if hasattr(training_data, "gazette") and type(training_data.gazette) == list:
             for item in training_data.gazette:
-                name = item["value"]
-                table = item["gazette"]
-                gazette_dict[name] = table
+                logger.error("BillShow: name=item  {}", item)
+                try :
+                    name = item["value"]
+                    table = item["gazette"]
+                    gazette_dict[name] = table
+                except:
+                    logger.error("BillShow: name=item  {}", item)
+
             self.gazette = gazette_dict
 
     def persist(self, file_name: Text, model_dir: Text) -> Optional[Dict[Text, Any]]:
@@ -75,7 +87,7 @@ class Gazette(Component):
         utils.write_json_to_file(os.path.join(model_dir, file_name), self.gazette, indent=4)
 
         return {"file": file_name}
-    
+
     @classmethod
     def load(
         cls,
