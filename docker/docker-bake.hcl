@@ -70,7 +70,7 @@ target "base-builder" {
 }
 
 target "default" {
-  dockerfile = "Dockerfile"
+  dockerfile = "docker/Dockerfile.botfront"
   tags       = ["${IMAGE_NAME}:${IMAGE_TAG}"]
 
   args = {
@@ -84,7 +84,7 @@ target "default" {
   cache-from = [
     "type=registry,ref=${IMAGE_NAME}:base-${BASE_IMAGE_HASH}",
     "type=registry,ref=${IMAGE_NAME}:base-builder-${BASE_BUILDER_IMAGE_HASH}",
-    "type=registry,ref=${IMAGE_NAME}:latest",
+    "type=registry,ref=${IMAGE_NAME}/${IMAGE_NAME}:latest",
   ]
 }
 
@@ -164,5 +164,23 @@ target "spacy-en" {
     "type=registry,ref=${IMAGE_NAME}:base-${BASE_IMAGE_HASH}",
     "type=registry,ref=${IMAGE_NAME}:base-builder-${BASE_BUILDER_IMAGE_HASH}",
     "type=registry,ref=${IMAGE_NAME}:latest-spacy-en",
+  ]
+}
+target "spacy-zh" {
+  dockerfile = "docker/Dockerfile.pretrained_embeddings_spacy_zh"
+  tags       = ["${IMAGE_NAME}:${IMAGE_TAG}-spacy-zh"]
+
+  args = {
+    IMAGE_BASE_NAME         = "${IMAGE_NAME}"
+    BASE_IMAGE_HASH         = "${BASE_IMAGE_HASH}"
+    BASE_BUILDER_IMAGE_HASH = "${BASE_BUILDER_IMAGE_HASH}"
+  }
+
+  cache-to = ["type=inline"]
+
+  cache-from = [
+    "type=registry,ref=${IMAGE_NAME}:base-${BASE_IMAGE_HASH}",
+    "type=registry,ref=${IMAGE_NAME}:base-builder-${BASE_BUILDER_IMAGE_HASH}",
+    "type=registry,ref=${IMAGE_NAME}/${IMAGE_NAME}:latest",
   ]
 }
