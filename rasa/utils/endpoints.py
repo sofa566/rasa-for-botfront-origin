@@ -4,7 +4,7 @@ import os
 from aiohttp.client_exceptions import ContentTypeError
 from sanic.request import Request
 from typing import Any, Optional, Text, Dict
-
+import json
 import rasa.shared.utils.io
 import rasa.utils.io
 from rasa.constants import DEFAULT_REQUEST_TIMEOUT
@@ -118,6 +118,9 @@ class EndpointConfig:
         if kwargs and "params" in kwargs:
             params.update(kwargs["params"])
             del kwargs["params"]
+
+        y = json.dumps(kwargs)
+        logger.info(f" =====  The json :  ====={y}")
         return params
 
     async def request(
@@ -142,6 +145,10 @@ class EndpointConfig:
             del kwargs["headers"]
 
         url = concat_url(self.url, subpath)
+        # BillAdd
+
+        logger.info(f" =====  The URL3 '{url}' ===== The subpath '{subpath}'======== ")
+        logger.debug(f" =====  The URL3 '{url}' ===== The subpath '{subpath}'======== ")
         async with self.session() as session:
             async with session.request(
                 method,
