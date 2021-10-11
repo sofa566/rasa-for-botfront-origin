@@ -67,18 +67,18 @@ class Gazette(Component):
         self, training_data: TrainingData, cfg: RasaNLUModelConfig, **kwargs: Any
     ) -> None:
         gazette_dict = {}
-        logger.error("BillShow: training_data  {}", training_data)
+        logger.error(f"BillShow: training_data  '{training_data}'")
         # my_json_object = json.dumps(training_data.nlu_as_json)
-        # logger.error("BillShow: json of training_data  {}", my_json_object)
+        # logger.error(f"BillShow: json of training_data '{my_json_object}'")
         if hasattr(training_data, "gazette") and type(training_data.gazette) == list:
             for item in training_data.gazette:
-                logger.error("BillShow: name=item  {}", item)
+                logger.error(f"BillShow: name=item  '{item}'")
                 try :
                     name = item["value"]
                     table = item["gazette"]
                     gazette_dict[name] = table
                 except:
-                    logger.error("BillShow: name=item  {}", item)
+                    logger.error(f"BillShow: name=item  '{item}'")
 
             self.gazette = gazette_dict
 
