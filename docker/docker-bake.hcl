@@ -88,6 +88,25 @@ target "default" {
   ]
 }
 
+target "default-gpu" {
+  dockerfile = "docker/Dockerfile.botfront_gpu"
+  tags       = ["${IMAGE_NAME}:${IMAGE_TAG}"]
+
+  args = {
+    IMAGE_BASE_NAME         = "${IMAGE_NAME}"
+    BASE_IMAGE_HASH         = "${BASE_IMAGE_HASH}"
+    BASE_BUILDER_IMAGE_HASH = "${BASE_BUILDER_IMAGE_HASH}"
+  }
+
+  cache-to = ["type=inline"]
+
+  cache-from = [
+    "type=registry,ref=${IMAGE_NAME}:base-${BASE_IMAGE_HASH}",
+    "type=registry,ref=${IMAGE_NAME}:base-builder-${BASE_BUILDER_IMAGE_HASH}",
+    "type=registry,ref=${IMAGE_NAME}/${IMAGE_NAME}:latest",
+  ]
+}
+
 target "full" {
   dockerfile = "docker/Dockerfile.full"
   tags       = ["${IMAGE_NAME}:${IMAGE_TAG}-full"]
