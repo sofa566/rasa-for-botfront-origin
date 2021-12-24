@@ -200,6 +200,5 @@ target "spacy-zh" {
   cache-from = [
     "type=registry,ref=${IMAGE_NAME}:base-${BASE_IMAGE_HASH}",
     "type=registry,ref=${IMAGE_NAME}:base-builder-${BASE_BUILDER_IMAGE_HASH}",
-    "type=registry,ref=${IMAGE_NAME}/${IMAGE_NAME}:latest",
   ]
 }
