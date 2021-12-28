@@ -5,6 +5,9 @@ variable "IMAGE_NAME" {
 variable "IMAGE_TAG" {
   default = "localdev"
 }
+variable "GPU_TAG" {
+  default = "gpu-"
+}
 
 variable "BASE_IMAGE_HASH" {
   default = "localdev"
@@ -21,7 +24,7 @@ variable "BASE_BUILDER_IMAGE_HASH" {
 # keep this in sync with the version in pyproject.toml
 # the variable is set automatically for builds in CI
 variable "POETRY_VERSION" {
-  default = "1.1.4"
+  default = "1.1.12"
 }
 
 group "base-images" {
@@ -45,6 +48,7 @@ target "base-poetry" {
   tags       = ["${IMAGE_NAME}:base-poetry-${POETRY_VERSION}"]
 
   args = {
+    GPU_TAG         = ""
     IMAGE_BASE_NAME = "${IMAGE_NAME}"
     BASE_IMAGE_HASH = "${BASE_IMAGE_HASH}"
     POETRY_VERSION  = "${POETRY_VERSION}"
@@ -62,6 +66,7 @@ target "base-builder" {
   tags       = ["${IMAGE_NAME}:base-builder-${IMAGE_TAG}"]
 
   args = {
+    GPU_TAG         = ""
     IMAGE_BASE_NAME = "${IMAGE_NAME}"
     POETRY_VERSION  = "${POETRY_VERSION}"
   }
@@ -190,6 +195,63 @@ target "spacy-zh" {
   tags       = ["${IMAGE_NAME}:${IMAGE_TAG}-spacy-zh"]
 
   args = {
+    GPU_TAG                 = ""
+    IMAGE_BASE_NAME         = "${IMAGE_NAME}"
+    BASE_IMAGE_HASH         = "${BASE_IMAGE_HASH}"
+    BASE_BUILDER_IMAGE_HASH = "${BASE_BUILDER_IMAGE_HASH}"
+  }
+
+  cache-to = ["type=inline"]
+
+  cache-from = [
+    "type=registry,ref=${IMAGE_NAME}:base-${BASE_IMAGE_HASH}",
+    "type=registry,ref=${IMAGE_NAME}:base-builder-${BASE_BUILDER_IMAGE_HASH}",
+  ]
+}
+################################################################
+
+target "base-gpu" {
+  dockerfile = "docker/Dockerfile.base-gpu"
+  tags       = ["${IMAGE_NAME}:base-${GPU_TAG}${IMAGE_TAG}"]
+  cache-to   = ["type=inline"]
+}
+
+target "base-gpu-poetry" {
+  dockerfile = "docker/Dockerfile.base-poetry"
+  tags       = ["${IMAGE_NAME}:base-gpu-poetry-${POETRY_VERSION}"]
+
+  args = {
+    GPU_TAG         = "${GPU_TAG}"
+    IMAGE_BASE_NAME = "${IMAGE_NAME}"
+    BASE_IMAGE_HASH = "${BASE_IMAGE_HASH}"
+    POETRY_VERSION  = "${POETRY_VERSION}"
+  }
+
+  cache-to = ["type=inline"]
+
+  cache-from = [
+    "type=registry,ref=${IMAGE_NAME}:base-${GPU_TAG}${IMAGE_TAG}",
+  ]
+}
+target "base-gpu-builder" {
+  dockerfile = "docker/Dockerfile.base-builder"
+  tags       = ["${IMAGE_NAME}:base-gpu-builder-${IMAGE_TAG}"]
+
+  args = {
+    GPU_TAG         = "${GPU_TAG}"
+    IMAGE_BASE_NAME = "${IMAGE_NAME}"
+    POETRY_VERSION  = "${POETRY_VERSION}"
+  }
+
+  cache-to = ["type=inline"]
+}
+
+target "gpu-spacy-zh" {
+  dockerfile = "docker/Dockerfile.pretrained_embeddings_spacy_zh"
+  tags       = ["${IMAGE_NAME}:${GPU_TAG}${IMAGE_TAG}-spacy-zh"]
+
+  args = {
+    GPU_TAG                 = "${GPU_TAG}"
     IMAGE_BASE_NAME         = "${IMAGE_NAME}"
     BASE_IMAGE_HASH         = "${BASE_IMAGE_HASH}"
     BASE_BUILDER_IMAGE_HASH = "${BASE_BUILDER_IMAGE_HASH}"

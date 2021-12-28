@@ -1,8 +1,9 @@
 # The base builder image used for all images
+ARG GPU_TAG
 ARG IMAGE_BASE_NAME
 ARG POETRY_VERSION
 
-FROM ${IMAGE_BASE_NAME}:base-poetry-${POETRY_VERSION}
+FROM ${IMAGE_BASE_NAME}:base-${GPU_TAG}poetry-${POETRY_VERSION}
 
 RUN apt-get update -qq && \
   apt-get install -y --no-install-recommends \

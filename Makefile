@@ -45,6 +45,10 @@ help:
 	@echo "        Build Rasa Open Source Docker image."
 	@echo "    build-docker-gpu"
 	@echo "        Build Rasa Open Source Docker image with gpu."
+	@echo "    build-docker-spacy-zh"
+	@echo "        Build Rasa Open Source Docker image whth spacy-zh."
+	@echo "    build-docker-gpu-spacy-zh"
+	@echo "        Build Rasa Open Source Docker image with gpu and spacy-zh."
 
 clean:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -249,3 +253,11 @@ build-docker-spacy-zh:
 	docker buildx bake -f docker/docker-bake.hcl base-poetry && \
 	docker buildx bake -f docker/docker-bake.hcl base-builder && \
 	docker buildx bake -f docker/docker-bake.hcl spacy-zh
+
+build-docker-gpu-spacy-zh:
+	export IMAGE_NAME=rasa && \
+	docker buildx use default && \
+	docker buildx bake -f docker/docker-bake.hcl base-gpu && \
+	docker buildx bake -f docker/docker-bake.hcl base-gpu-poetry && \
+	docker buildx bake -f docker/docker-bake.hcl base-gpu-builder && \
+	docker buildx bake -f docker/docker-bake.hcl gpu-spacy-zh

@@ -1,9 +1,10 @@
 # The image tagged with the 'spacy-en' suffix
+ARG GPU_TAG
 ARG IMAGE_BASE_NAME
 ARG BASE_IMAGE_HASH
 ARG BASE_BUILDER_IMAGE_HASH
 
-FROM ${IMAGE_BASE_NAME}:base-builder-${BASE_BUILDER_IMAGE_HASH} as builder
+FROM ${IMAGE_BASE_NAME}:base-${GPU_TAG}builder-${BASE_BUILDER_IMAGE_HASH} as builder
 
 # copy files
 COPY . /build/
@@ -38,7 +39,7 @@ RUN pip install -U spacy && \
 #    python -m spacy link zh_core_web_lg zh
 
 # start a new build stage
-FROM ${IMAGE_BASE_NAME}:base-${BASE_IMAGE_HASH} as runner
+FROM ${IMAGE_BASE_NAME}:base-${GPU_TAG}${BASE_IMAGE_HASH} as runner
 
 # copy everything from /opt
 COPY --from=builder /opt/venv /opt/venv
