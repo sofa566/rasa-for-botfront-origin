@@ -32,7 +32,7 @@ RUN . /opt/venv/bin/activate && poetry build -f wheel -n && \
 
 # make sure we use the virtualenv
 ENV PATH="/opt/venv/bin:$PATH"
-
+RUN pip install --upgrade pip
 # spacy link
 RUN pip install -U spacy && \
   python -m spacy download zh_core_web_lg
