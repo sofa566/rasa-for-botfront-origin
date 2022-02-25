@@ -1,5 +1,5 @@
 # The base image used for all images
-FROM nvidia/cuda:11.4.2-devel-ubuntu20.04 as base
+FROM nvidia/cuda:11.4.2-runtime-ubuntu20.04 as base
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
